@@ -1,0 +1,426 @@
+Я бы разбил задачу на 3 больших промпта. Не один. Cursor и Claude гораздо лучше справляются, когда проект собирается этапами.
+
+PROMPT 1 — СОБРАТЬ ВСЮ ИГРУ
+You are a senior Flutter + Flame game developer.
+
+Create a complete production-quality mobile game.
+
+Game genre:
+
+2D endless runner + Fruit Ninja slicing.
+
+The player controls only swipe gestures.
+
+A miner automatically runs forever.
+
+The world scrolls continuously.
+
+All assets are already located inside the assets folder.
+
+Automatically inspect the assets directory and use every asset appropriately.
+
+If sprite sizes differ,
+background sizes differ,
+pivot points are incorrect,
+transparent padding is inconsistent,
+or image resolutions do not match,
+
+automatically normalize everything in code without modifying the original assets.
+
+Never require me to manually fix assets.
+
+Create clean architecture.
+
+Separate:
+
+Game
+
+Player
+
+World
+
+Spawner
+
+Effects
+
+Camera
+
+HUD
+
+Score
+
+Audio
+
+Particles
+
+Bosses
+
+Animations
+
+Input
+
+Collision
+
+Managers
+
+The game must run smoothly at 60 FPS.
+
+Everything must be modular and production ready.
+
+The miner continuously runs.
+
+Background loops infinitely.
+
+Every 300 meters change biome.
+
+Biome transition should smoothly fade.
+
+Difficulty continuously increases.
+
+Increase:
+
+spawn rate
+
+fall speed
+
+random angles
+
+rotation speed
+
+without sudden jumps.
+
+Everything should feel polished.
+PROMPT 2 — GAME FEEL (самый важный)
+Now polish the entire gameplay.
+
+The game must feel as satisfying as Fruit Ninja.
+
+Do NOT rewrite existing systems.
+
+Improve only game feel.
+
+Implement:
+
+Swipe trail
+
+Smooth glowing trail.
+
+Rounded edges.
+
+Fade in 0.25 sec.
+
+Rock slicing:
+
+Impact flash
+
+Dust
+
+Debris
+
+Rock halves
+
+Random physics
+
+Rotation
+
+Fade
+
+Camera shake
+
+Small shake for rocks
+
+Bigger shake for bosses
+
+Pause hit
+
+Freeze game for 0.04 sec after every successful slice.
+
+Floating score
+
++10
+
++25
+
++100
+
+Combo
+
+COMBO x3
+
+COMBO x5
+
+FRENZY
+
+Animated text.
+
+Scaling.
+
+Glow.
+
+Particles
+
+Dust
+
+Rock fragments
+
+Smoke
+
+Sparkles
+
+Spider blood particles (stylized)
+
+Diamond sparkle
+
+Diamond emits light particles.
+
+Explosion
+
+Dynamite explosion.
+
+Screen shake.
+
+Smoke.
+
+Fire.
+
+Audio hooks
+
+Create placeholders for:
+
+slice
+
+rock
+
+diamond
+
+explosion
+
+combo
+
+boss
+
+game over
+
+Camera
+
+Smooth.
+
+Never excessive.
+
+Use squash & stretch where appropriate.
+
+Use small anticipation before impacts.
+
+Make every successful slice satisfying.
+PROMPT 3 — ФИНАЛЬНАЯ ПОЛИРОВКА
+Now finish the game like a professional mobile release.
+
+Inspect every existing asset automatically.
+
+If any PNG has:
+
+wrong pivot
+
+wrong padding
+
+wrong transparent borders
+
+wrong scaling
+
+different size
+
+wrong anchor
+
+incorrect animation timing
+
+automatically compensate inside code.
+
+Never require manual asset editing.
+
+Gameplay progression:
+
+0-300m
+
+Classic Mine
+
+300-600m
+
+Crystal Cave
+
+600-900m
+
+Golden Mine
+
+900-1200m
+
+Abandoned Mine
+
+1200-1500m
+
+Lava Cave
+
+1500+
+
+Random biome rotation.
+
+Spawn:
+
+Small rocks
+
+Medium rocks
+
+Large rocks
+
+Diamonds
+
+Spider
+
+Boss Spider
+
+Dynamite
+
+Random cave debris
+
+Wood beams
+
+Create additional cave obstacles if needed while matching the game's art style.
+
+Random Events:
+
+Rockfall
+
+Crystal Rain
+
+Spider Nest
+
+Treasure Rush
+
+Dynamite Zone
+
+Large animated title appears.
+
+Bosses
+
+Large spider
+
+Red glowing eyes
+
+Needs 2 successful slices.
+
+First hit:
+
+visible damage
+
+Second hit:
+
+death animation
+
+Game Over
+
+If dangerous object hits miner head:
+
+short freeze
+
+camera shake
+
+GAME OVER
+
+Distance
+
+Score
+
+Best Combo
+
+Restart
+
+Optimize everything.
+
+Use Flame particles.
+
+Avoid garbage allocations.
+
+Maintain stable 60 FPS.
+
+Review the entire project.
+
+Fix inconsistencies.
+
+Remove duplicated code.
+
+Refactor where necessary.
+
+The final result should feel like a polished mobile arcade game inspired by Fruit Ninja and Subway Surfers but with its own unique mining identity.
+🔥 И ещё один, четвёртый промпт — самый полезный
+
+После того как Cursor закончит, отправь ему этот запрос. Именно он часто поднимает качество с "рабочего" до "приятного":
+
+Play the role of a senior game director.
+
+Review the entire project critically.
+
+Find everything that feels cheap, repetitive, awkward or unpolished.
+
+Improve gameplay pacing.
+
+Improve juice.
+
+Improve player feedback.
+
+Improve animations.
+
+Improve timing.
+
+Improve particles.
+
+Improve transitions.
+
+Improve object spawning.
+
+Improve difficulty curve.
+
+Improve visual hierarchy.
+
+Improve readability.
+
+Improve performance.
+
+Improve code quality.
+
+If something feels wrong, fix it automatically.
+
+If any mechanic reduces fun, redesign it while keeping the original gameplay.
+
+Keep the game simple.
+
+Prioritize player emotions over technical perfection.
+
+The first 30 seconds must immediately hook the player.
+
+The last seconds before Game Over must be the most intense.
+
+Every 15–20 seconds the player should experience something new:
+new biome,
+event,
+reward,
+combo,
+or tension spike.
+
+The goal is to make players think:
+'Just one more run.'
+
+Do not ask questions.
+Make improvements autonomously.
+Это я бы уже считал финальным ТЗ
+
+Если у тебя действительно:
+
+есть ассеты персонажа;
+есть анимация бега;
+есть фоны;
+есть камни;
+есть паук;
+будут алмазы, динамит и остальные препятствия,
+
+то этих промптов достаточно, чтобы Cursor собрал полноценный MVP игры.
+
+После этого уже стоит играть самому и на основе ощущений менять баланс и темп. Ни один промпт не заменит реальные игровые тесты, но он может сильно ускорить получение первой качественной версии.

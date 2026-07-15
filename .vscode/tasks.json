@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pulse: Flutter Web (8093)",
+      "type": "shell",
+      "command": "flutter run -d web-server --web-port 8093 --web-hostname 127.0.0.1",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "flutter",
+        "pattern": {
+          "regexp": "^.*$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Launching lib",
+          "endsPattern": "is being served at"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "pulse"
+      }
+    },
+    {
+      "label": "Pulse: Open in Cursor Browser",
+      "dependsOn": ["Pulse: Flutter Web (8093)"],
+      "dependsOrder": "sequence",
+      "command": "${input:pulseSimpleBrowser}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "pulseSimpleBrowser",
+      "type": "command",
+      "command": "simpleBrowser.show",
+      "args": ["http://127.0.0.1:8093"]
+    }
+  ]
+}

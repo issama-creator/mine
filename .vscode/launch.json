@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Pulse Lane — Web + Preview",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "web-server",
+      "args": [
+        "--web-port=8093",
+        "--web-hostname=127.0.0.1"
+      ],
+      "preLaunchTask": "Pulse: Flutter Web (8093)"
+    }
+  ]
+}
