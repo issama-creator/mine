@@ -21,6 +21,7 @@ import 'managers/audio_manager.dart';
 import 'managers/difficulty_manager.dart';
 import 'managers/event_manager.dart';
 import 'managers/score_manager.dart';
+import 'managers/settings_manager.dart';
 import 'managers/spawner_manager.dart';
 import 'models/biome_kind.dart';
 import 'models/game_event.dart';
@@ -104,6 +105,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
       await assetManager.loadAll();
     }
     await scores.loadPersisted();
+    await SettingsManager.instance.load();
     mineBackground = WorldBackground(
       assets: assetManager,
       biomeManager: biomeManager,
@@ -118,6 +120,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
     miner.layout(GameConfig.worldWidth, GameConfig.worldHeight);
     _loaded = true;
     overlays.add(GameConfig.overlayTitle);
+    pauseEngine();
   }
 
   @override
@@ -177,6 +180,36 @@ class MineRunnerGame extends FlameGame with PanDetector {
   }
 
   void restart() => startRun();
+
+  void returnToMenu() {
+    if (!_loaded) return;
+    _clearObjects();
+    _clearEffects();
+    difficulty.distanceMeters = 0;
+    difficulty.runTime = 0;
+    scores.resetRun();
+    _spawner.reset();
+    events.reset();
+    bosses.reset();
+    biomeManager.reset();
+    meters.value = 0;
+    _hitFreeze = 0;
+    _deathFreeze = 0;
+    _eventBannerT = 0;
+    _sliceModeT = 0;
+    sliceModeNotifier.value = 0;
+    eventBanner.value = null;
+    isGameOver = false;
+    pauseMenu.value = false;
+    running.value = false;
+    shake.runBobEnabled = false;
+    overlays.remove(GameConfig.overlayHud);
+    overlays.remove(GameConfig.overlayGameOver);
+    overlays.remove(GameConfig.overlayPause);
+    overlays.remove(GameConfig.overlayEvent);
+    overlays.add(GameConfig.overlayTitle);
+    pauseEngine();
+  }
 
   @override
   void update(double dt) {
@@ -510,7 +543,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
   }
 
   void _finishGameOver() {
-    scores.tryUpdateHighScore();
+    scores.tryUpdateRecords(meters: meters.value);
     overlays.remove(GameConfig.overlayHud);
     overlays.remove(GameConfig.overlayEvent);
     overlays.add(GameConfig.overlayGameOver);

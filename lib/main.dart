@@ -22,16 +22,16 @@ Future<void> main() async {
       DeviceOrientation.landscapeRight,
     ]);
   }
-  runApp(const MineSliceApp());
+  runApp(const MineRushApp());
 }
 
-class MineSliceApp extends StatelessWidget {
-  const MineSliceApp({super.key});
+class MineRushApp extends StatelessWidget {
+  const MineRushApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mine Slice',
+      title: 'Mine Rush',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -71,7 +71,7 @@ class _MineGameScreenState extends State<MineGameScreen> {
       if (!mounted) return;
       setState(() => _game = MineRunnerGame());
     } catch (e, st) {
-      debugPrint('Mine Slice boot failed: $e\n$st');
+      debugPrint('Mine Rush boot failed: $e\n$st');
       if (!mounted) return;
       setState(() => _loadError = e);
     }
@@ -117,7 +117,7 @@ class _MineGameScreenState extends State<MineGameScreen> {
               CircularProgressIndicator(color: Color(0xFFFFD54F)),
               SizedBox(height: 16),
               Text(
-                'Loading Mine Slice…',
+                'Loading Mine Rush…',
                 style: TextStyle(color: Colors.white70),
               ),
             ],

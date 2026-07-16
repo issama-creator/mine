@@ -1,4 +1,4 @@
-/// Global tuning for Mine Slice Runner.
+/// Global tuning for Mine Rush.
 abstract final class GameConfig {
   static const targetFps = 60.0;
 

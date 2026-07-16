@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../mine_runner_game.dart';
 import '../models/game_event.dart';
 import 'animated_juice_text.dart';
+import 'mine_main_menu.dart';
 
 class MineHudOverlay extends StatelessWidget {
   const MineHudOverlay({super.key, required this.game});
@@ -135,50 +136,7 @@ class MineTitleOverlay extends StatelessWidget {
   final MineRunnerGame game;
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black54,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const AnimatedJuiceText(
-              text: 'MINE SLICE',
-              glowColor: Color(0xFFFFD54F),
-              style: TextStyle(
-                color: Color(0xFFFFD54F),
-                fontSize: 36,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 4,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'ТАП по камням · кристалл = 5с РЕЗКА',
-              style: TextStyle(color: Colors.white70),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: game.startRun,
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF6D4C41),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-              ),
-              child: const Text(
-                'RUN',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MineMainMenu(game: game);
 }
 
 class MineGameOverOverlay extends StatelessWidget {
@@ -241,9 +199,31 @@ class MineGameOverOverlay extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: game.restart,
-                  child: const Text('TAP TO RESTART'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton(
+                      onPressed: game.restart,
+                      child: const Text('ЕЩЁ РАЗ'),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton(
+                      onPressed: game.returnToMenu,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        side: const BorderSide(color: Color(0xFF6D4C41)),
+                      ),
+                      child: const Text('МЕНЮ'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'или тап по экрану',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.35),
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -277,7 +257,16 @@ class MinePauseOverlay extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton(
               onPressed: game.togglePause,
-              child: const Text('RESUME'),
+              child: const Text('ПРОДОЛЖИТЬ'),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton(
+              onPressed: game.returnToMenu,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white60,
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              ),
+              child: const Text('В МЕНЮ'),
             ),
           ],
         ),
