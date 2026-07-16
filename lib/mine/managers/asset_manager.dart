@@ -24,9 +24,12 @@ class AssetManager {
   int runFrameCount = 0;
   Sprite? spider;
   Sprite? bossSpider;
-  Sprite? rockSmall;
-  Sprite? rockMedium;
-  Sprite? rockLarge;
+  Sprite? objRock;
+  Sprite? objCrate;
+  Sprite? objCrystal;
+  Sprite? objDynamite;
+  Sprite? objSaw;
+  Sprite? objSpikeBlock;
   final List<Sprite> mineBackgrounds = [];
   Sprite? bgMain;
 
@@ -92,9 +95,12 @@ class AssetManager {
       ...runPaths,
       'animals/spider.png',
       'animals/spiderbig2taps.png',
-      'kamni/rock_1.png',
-      'kamni/rock_2.png',
-      'kamni/rock_3.png',
+      'objekts/rock.png',
+      'objekts/crate.png',
+      'objekts/crystal.png',
+      'objekts/dynamite.png',
+      'objekts/saw.png',
+      'objekts/spike_block.png',
       ...MineBackground.paths,
     ]);
 
@@ -116,9 +122,12 @@ class AssetManager {
 
     spider = Sprite(Flame.images.fromCache('animals/spider.png'));
     bossSpider = Sprite(Flame.images.fromCache('animals/spiderbig2taps.png'));
-    rockLarge = Sprite(Flame.images.fromCache('kamni/rock_1.png'));
-    rockMedium = Sprite(Flame.images.fromCache('kamni/rock_2.png'));
-    rockSmall = Sprite(Flame.images.fromCache('kamni/rock_3.png'));
+    objRock = Sprite(Flame.images.fromCache('objekts/rock.png'));
+    objCrate = Sprite(Flame.images.fromCache('objekts/crate.png'));
+    objCrystal = Sprite(Flame.images.fromCache('objekts/crystal.png'));
+    objDynamite = Sprite(Flame.images.fromCache('objekts/dynamite.png'));
+    objSaw = Sprite(Flame.images.fromCache('objekts/saw.png'));
+    objSpikeBlock = Sprite(Flame.images.fromCache('objekts/spike_block.png'));
     mineBackgrounds.addAll([
       for (final path in MineBackground.paths)
         Sprite(Flame.images.fromCache(path)),
@@ -191,9 +200,12 @@ class AssetManager {
     final pairs = <(String, Sprite?)>[
       ('spider', spider),
       ('boss', bossSpider),
-      ('rock_s', rockSmall),
-      ('rock_m', rockMedium),
-      ('rock_l', rockLarge),
+      ('obj_rock', objRock),
+      ('obj_crate', objCrate),
+      ('obj_crystal', objCrystal),
+      ('obj_dynamite', objDynamite),
+      ('obj_saw', objSaw),
+      ('obj_spike', objSpikeBlock),
     ];
     for (final (key, spr) in pairs) {
       if (spr == null) continue;
@@ -375,11 +387,18 @@ class AssetManager {
   double runFrameScale(Sprite frame) => _runFrameScale;
 
   Sprite? spriteFor(ObjectKind kind) => switch (kind) {
-        ObjectKind.rockSmall => rockSmall,
-        ObjectKind.rockMedium => rockMedium,
-        ObjectKind.rockLarge => rockLarge,
+        ObjectKind.rockSmall ||
+        ObjectKind.rockMedium ||
+        ObjectKind.rockLarge ||
+        ObjectKind.objRock =>
+          objRock,
         ObjectKind.spider => spider,
         ObjectKind.bossSpider => bossSpider,
+        ObjectKind.objCrate => objCrate,
+        ObjectKind.objCrystal => objCrystal,
+        ObjectKind.objDynamite => objDynamite,
+        ObjectKind.objSaw => objSaw,
+        ObjectKind.objSpikeBlock => objSpikeBlock,
         _ => null,
       };
 
@@ -387,9 +406,16 @@ class AssetManager {
     final key = switch (kind) {
       ObjectKind.spider => 'spider',
       ObjectKind.bossSpider => 'boss',
-      ObjectKind.rockSmall => 'rock_s',
-      ObjectKind.rockMedium => 'rock_m',
-      ObjectKind.rockLarge => 'rock_l',
+      ObjectKind.rockSmall ||
+      ObjectKind.rockMedium ||
+      ObjectKind.rockLarge ||
+      ObjectKind.objRock =>
+        'obj_rock',
+      ObjectKind.objCrate => 'obj_crate',
+      ObjectKind.objCrystal => 'obj_crystal',
+      ObjectKind.objDynamite => 'obj_dynamite',
+      ObjectKind.objSaw => 'obj_saw',
+      ObjectKind.objSpikeBlock => 'obj_spike',
       _ => '',
     };
     final bounds = _visualCenters[key];

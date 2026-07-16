@@ -13,7 +13,7 @@ import 'components/ground_debug_component.dart';
 import 'components/miner_component.dart';
 import 'components/swipe_trail_component.dart';
 import 'components/world_background.dart';
-import 'core/fill_resolution_viewport.dart';
+import 'core/adaptive_cover_viewport.dart';
 import 'core/game_config.dart';
 import 'effects/juice_spawner.dart';
 import 'managers/asset_manager.dart';
@@ -33,7 +33,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
   MineRunnerGame()
       : super(
           camera: CameraComponent(
-            viewport: FillResolutionViewport(
+            viewport: AdaptiveCoverViewport(
               resolution: Vector2(
                 GameConfig.worldWidth,
                 GameConfig.worldHeight,
@@ -396,12 +396,15 @@ class MineRunnerGame extends FlameGame with PanDetector {
       sy = _spawner.spawnY(live.length);
     }
 
+    final homing = !kind.isGroundHazard && _spawner.rollHomingFor(kind);
+
     final vel = _spawner.velocityFor(
       kind,
       spawnX: sx,
       spawnY: sy,
       headX: head.x,
       headY: head.y,
+      homing: homing,
     );
     final obj = FallingObject(
       kind: kind,
@@ -409,6 +412,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
       vx: vel.vx,
       vy: vel.vy,
       vr: vel.vr,
+      homing: homing,
       onSliced: _onSliced,
       onDamaged: _onDamaged,
       onHitMiner: _onHitMiner,
@@ -429,6 +433,9 @@ class MineRunnerGame extends FlameGame with PanDetector {
       perfect: perfect,
       killed: false,
       combo: scores.combo,
+      sprite: obj.sliceSprite,
+      objectSize: obj.sliceSize,
+      objectAngle: obj.sliceAngle,
     );
   }
 
@@ -451,6 +458,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
           AudioManager.diamond();
           shake.bump(5, duration: 0.1);
         case ObjectKind.dynamite:
+        case ObjectKind.objDynamite:
           AudioManager.explosion();
           shake.bump(14, duration: 0.22);
         case ObjectKind.bossSpider:
@@ -475,6 +483,9 @@ class MineRunnerGame extends FlameGame with PanDetector {
       perfect: perfect,
       killed: true,
       combo: scores.combo,
+      sprite: obj.sliceSprite,
+      objectSize: obj.sliceSize,
+      objectAngle: obj.sliceAngle,
     );
   }
 

@@ -23,6 +23,7 @@ class FallingObject extends PositionComponent
     required this.vr,
     required this.onSliced,
     required this.onHitMiner,
+    this.homing = false,
     this.onDamaged,
   }) {
     // Size ready immediately — never fly with 0×0 hurtbox before onLoad.
@@ -39,12 +40,11 @@ class FallingObject extends PositionComponent
   double vx;
   double vy;
   double vr;
+  final bool homing;
   int hp = 1;
   bool dead = false;
-  bool _dying = false;
   bool _cracked = false;
   bool _landed = false;
-  double _deathT = 0;
   double _scale = 1;
   double _renderAlpha = 1;
   double _wobbleT = 0;
@@ -84,19 +84,66 @@ class FallingObject extends PositionComponent
 
   double get hitRadius => size.length * 0.38;
 
-  bool get isDangerous => kind.isDangerous && !_dying;
+  bool get isDangerous => kind.isDangerous && !dead;
 
-  bool get canInteract => !dead && !_dying && !_landed;
+  bool get canInteract => !dead && !_landed;
 
   /// Counts for spawn cap even while death juice plays (avoids 4-visible dumps).
   bool get countsTowardSpawnCap =>
       kind.isDangerous && !dead && !_landed;
 
+  bool get _isStone =>
+      kind == ObjectKind.rockSmall ||
+      kind == ObjectKind.rockMedium ||
+      kind == ObjectKind.rockLarge ||
+      kind == ObjectKind.objRock;
+
   bool get _isRock =>
       kind == ObjectKind.rockSmall ||
       kind == ObjectKind.rockMedium ||
       kind == ObjectKind.rockLarge ||
-      kind == ObjectKind.debris;
+      kind == ObjectKind.debris ||
+      kind == ObjectKind.objRock ||
+      kind == ObjectKind.objCrate;
+
+  bool get _isDynamite =>
+      kind == ObjectKind.dynamite || kind == ObjectKind.objDynamite;
+
+  void _steerTowardMiner(double dt) {
+    if (!game.miner.isMounted) return;
+    if (kind.isGroundHazard) return;
+
+    final target = game.miner.headWorld;
+    final dx = target.x - position.x;
+    final dy = target.y - position.y;
+    final dist = math.max(32.0, math.sqrt(dx * dx + dy * dy));
+    final closeBoost = (1.0 + (120 / dist).clamp(0.0, 0.65));
+    var pull = GameConfig.threatHomingAccel * closeBoost;
+    if (_isStone) pull *= GameConfig.stoneHomingMul;
+    if (kind.isSliceCrystal || kind == ObjectKind.goldNugget) {
+      pull *= 0.65;
+    }
+    final vMul = GameConfig.threatHomingVerticalMul;
+
+    vx += (dx / dist) * pull * dt;
+    vy += (dy / dist) * pull * dt * vMul;
+  }
+
+  void _checkDynamiteDetonation() {
+    if (!_isDynamite || dead || _landed) return;
+    if (!game.miner.isMounted) return;
+
+    final target = game.miner.position + Vector2(0, -game.miner.hitH * 0.42);
+    final dx = position.x - target.x;
+    final dy = position.y - target.y;
+    final dist = math.sqrt(dx * dx + dy * dy);
+    if (dist > GameConfig.dynamiteDetonatePx) return;
+
+    dead = true;
+    JuiceSpawner.onMinerHit(game.world, position.clone(), kind);
+    onHitMiner(this);
+    removeFromParent();
+  }
 
   double get floorContactY => position.y + math.max(size.y, 24) * 0.5;
 
@@ -128,23 +175,19 @@ class FallingObject extends PositionComponent
 
     final groundY = GameConfig.groundY;
 
-    if (_dying) {
-      _deathT += dt;
-      vr += 14 * dt;
-      _scale = math.max(0.05, _scale * (1 - dt * 3.5));
-      _renderAlpha = math.max(0, 1 - _deathT / 0.55);
-      angle += vr * dt;
-      position.y += vy * dt * 0.35;
-      vy += 160 * dt;
-      clampAboveFloor(groundY);
-      if (_deathT >= 0.55) removeFromParent();
-      return;
-    }
-
     if (dead || _landed) return;
 
     _prevPos.setFrom(position);
     _hasPrev = true;
+
+    if (homing) {
+      _steerTowardMiner(dt);
+    }
+
+    if (_isDynamite) {
+      _checkDynamiteDetonation();
+      if (dead) return;
+    }
 
     // —— Path spikes: glued to cobblestone top, scroll with the road ——
     if (kind.isGroundHazard) {
@@ -166,7 +209,7 @@ class FallingObject extends PositionComponent
 
     final grav = kind.isStalactite
         ? 140.0
-        : (_isRock ? 95.0 : 70.0);
+        : (_isStone ? 72.0 : (_isRock ? 88.0 : 70.0));
     vy += grav * dt;
     if (_isRock) vr *= 1 + dt * 0.15;
 
@@ -198,7 +241,7 @@ class FallingObject extends PositionComponent
   }
 
   bool _checkHitMinerAfterMove() {
-    if (dead || _dying || _landed || !isDangerous) return false;
+    if (dead || _landed || !isDangerous) return false;
     if (!game.miner.isMounted) return false;
 
     final pos = position;
@@ -224,14 +267,17 @@ class FallingObject extends PositionComponent
     return true;
   }
 
+  Sprite? get sliceSprite => _sprite;
+  Vector2 get sliceSize => hurtSize;
+  double get sliceAngle => angle;
+
   void slice({required bool perfect}) {
-    if (dead || _dying || _landed) return;
+    if (dead || _landed) return;
     hp -= 1;
     if (hp <= 0) {
-      _dying = true;
-      _deathT = 0;
-      vr = (_cracked ? 6.0 : 10.0) * (hp.isEven ? 1 : -1);
+      dead = true;
       onSliced(this, perfect: perfect);
+      removeFromParent();
     } else {
       _cracked = true;
       _scale *= 0.9;
@@ -241,7 +287,7 @@ class FallingObject extends PositionComponent
   }
 
   void checkMinerCollision(Vector2 minerHead, double headR) {
-    if (dead || _dying || _landed || !isDangerous) return;
+    if (dead || _landed || !isDangerous) return;
     if (!game.miner.isMounted) return;
 
     final prev = _hasPrev ? _prevPos : null;
@@ -286,12 +332,11 @@ class FallingObject extends PositionComponent
     }
 
     canvas.save();
-    if (_dying) canvas.scale(_scale);
     canvas.rotate(angle);
 
     if (_sprite != null) {
       final paint = Paint()..color = Colors.white.withValues(alpha: _renderAlpha);
-      if (_cracked || (hp < kind.maxHp && !_dying)) {
+      if (_cracked || hp < kind.maxHp) {
         paint.colorFilter = const ColorFilter.mode(
           Color(0xFFFF8A80),
           BlendMode.modulate,
@@ -315,7 +360,7 @@ class FallingObject extends PositionComponent
       final s = size.y / 36.0;
       assets.drawProcedural(canvas, kind, s);
     } else {
-      canvas.scale(_dying ? 1 : _scale);
+      canvas.scale(_scale);
       assets.drawProcedural(canvas, kind, 1);
     }
 

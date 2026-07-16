@@ -20,7 +20,7 @@ abstract final class GameConfig {
   static const metersPerSecond = 12.0;
 
   /// New background every N meters (crossfade at segment start).
-  static const biomeIntervalMeters = 400.0;
+  static const biomeIntervalMeters = 600.0;
 
   /// Dual-layer crossfade duration (smoothstep).
   static const biomeFadeSeconds = 1.25;
@@ -72,6 +72,21 @@ abstract final class GameConfig {
   static const minLaneGapPx = 140.0;
   /// At most one dangerous faller in the miner crown corridor.
   static const maxThreatsInMinerLane = 1;
+
+  /// ~0.5 m in world px (miner ≈ 1.7 m tall → 168 px).
+  static const dynamiteDetonatePx = 50.0;
+
+  /// Gentle mid-air correction so threats read as «falling on you».
+  static const threatHomingAccel = 52.0;
+  static const threatHomingVerticalMul = 0.52;
+  static const stoneHomingMul = 0.55;
+
+  /// Spawn from ceiling ahead of the miner (fraction of world width).
+  static const spawnAheadMinFrac = 0.04;
+  static const spawnAheadMaxFrac = 0.34;
+  static const spawnAheadSpreadFrac = 0.26;
+  static const spawnCeilingMinY = 150.0;
+  static const spawnCeilingMaxY = 240.0;
 
   /// Show cyan hurt-box overlay while tuning (keep false for players).
   static const debugMinerHitbox = false;

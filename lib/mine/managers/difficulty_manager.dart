@@ -53,7 +53,7 @@ class DifficultyManager {
   }
 }
 
-/// Biome swap triggers at the START of each distance segment (e.g. 400 m).
+/// Biome swap triggers at the START of each distance segment (e.g. 600 m).
 class BiomeManager {
   BiomeManager(this._difficulty);
 

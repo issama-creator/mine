@@ -23,5 +23,5 @@ flutter:
   assets:
     - assets/player/
     - assets/animals/
-    - assets/kamni/
     - assets/backgr/
+    - assets/objekts/

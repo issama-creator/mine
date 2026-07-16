@@ -16,8 +16,8 @@ Future<void> main() async {
   Flame.images.prefix = 'assets/';
   if (!kIsWeb) {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // Side-scroller — landscape keeps miner/road proportions on phones.
     await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
@@ -127,9 +127,14 @@ class _MineGameScreenState extends State<MineGameScreen> {
     }
 
     return Scaffold(
-      body: GameWidget(
-        game: _game!,
-        overlayBuilderMap: {
+      backgroundColor: const Color(0xFF0D0A08),
+      body: SizedBox.expand(
+        child: GameWidget(
+          game: _game!,
+          backgroundBuilder: (_) => Container(
+            color: const Color(0xFF0D0A08),
+          ),
+          overlayBuilderMap: {
           GameConfig.overlayTitle: (c, g) =>
               MineTitleOverlay(game: g as MineRunnerGame),
           GameConfig.overlayHud: (c, g) =>
@@ -141,6 +146,7 @@ class _MineGameScreenState extends State<MineGameScreen> {
           GameConfig.overlayEvent: (c, g) =>
               MineEventOverlay(game: g as MineRunnerGame),
         },
+        ),
       ),
     );
   }
