@@ -194,8 +194,8 @@ class SpawnerManager {
     final lo = screenWidth * 0.08;
     final hi = screenWidth * 0.92;
 
-    // ~50% fall into the miner column (head / pack / belly).
-    if (!avoidMinerLane && _rng.nextDouble() < 0.5) {
+    // ~25% near miner; rest rain across the full sky (tappable anywhere).
+    if (!avoidMinerLane && _rng.nextDouble() < 0.25) {
       final band = screenWidth * 0.18;
       final x =
           (minerX + (_rng.nextDouble() - 0.55) * band * 2).clamp(lo, hi);

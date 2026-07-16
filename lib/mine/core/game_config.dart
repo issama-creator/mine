@@ -14,7 +14,7 @@ abstract final class GameConfig {
   static const minerX = 280.0;
 
   /// Red GroundY line + green feet circle. Off after calibration.
-  static const debugGround = true;
+  static const debugGround = false;
 
   /// Base meters/sec — ramps up with distance via DifficultyManager.speedScale.
   static const metersPerSecond = 12.0;

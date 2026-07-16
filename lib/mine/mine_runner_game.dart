@@ -278,6 +278,8 @@ class MineRunnerGame extends FlameGame with PanDetector {
     _pointerMoved = false;
     if (sliceModeActive) {
       sliceSystem.begin(p);
+    } else {
+      _hitFallingAt(p);
     }
   }
 
@@ -294,6 +296,8 @@ class MineRunnerGame extends FlameGame with PanDetector {
     if (sliceModeActive) {
       sliceSystem.add(p);
       _processSlice();
+    } else {
+      _hitFallingAt(p);
     }
   }
 
@@ -301,10 +305,8 @@ class MineRunnerGame extends FlameGame with PanDetector {
   void onPanEnd(DragEndInfo info) {
     if (sliceModeActive) {
       sliceSystem.end();
-    }
-    // Short press always works as TAP (even during slice mode).
-    if (!_pointerMoved && _pointerStart != null) {
-      _processTap(_pointerStart!);
+    } else if (!_pointerMoved && _pointerStart != null) {
+      _hitFallingAt(_pointerStart!);
     }
     _pointerStart = null;
     _pointerMoved = false;
@@ -317,13 +319,14 @@ class MineRunnerGame extends FlameGame with PanDetector {
     _pointerMoved = false;
   }
 
-  void _processTap(Offset screenPos) {
-    final world = camera.globalToLocal(Vector2(screenPos.dx, screenPos.dy));
+  /// World-space tap: any interactable faller under the finger (full sky).
+  void _hitFallingAt(Offset worldPos) {
     FallingObject? best;
     var bestDist = double.infinity;
+    final finger = Vector2(worldPos.dx, worldPos.dy);
     for (final obj in _ofType<FallingObject>()) {
       if (!obj.canInteract) continue;
-      final d = obj.position.distanceTo(world);
+      final d = obj.position.distanceTo(finger);
       final reach =
           obj.hitRadius * GameConfig.tapReachMul + GameConfig.tapReachPad;
       if (d <= reach && d < bestDist) {
@@ -341,6 +344,7 @@ class MineRunnerGame extends FlameGame with PanDetector {
   void _processSlice() {
     _objectBuffer.clear();
     for (final obj in _ofType<FallingObject>()) {
+      if (!obj.canInteract) continue;
       _objectBuffer.add(obj);
     }
     var totalHits = 0;
